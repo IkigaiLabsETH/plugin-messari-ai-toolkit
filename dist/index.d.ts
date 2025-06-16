@@ -1,5 +1,4 @@
-import * as _elizaos_core from '@elizaos/core';
-import { Provider } from '@elizaos/core';
+import { Provider, Plugin } from '@elizaos/core';
 
 declare const copilotProvider: Provider;
 
@@ -8,11 +7,6 @@ declare namespace index {
   export { index_copilotProvider as copilotProvider };
 }
 
-declare const messariPlugin: {
-    name: string;
-    description: string;
-    actions: any[];
-    providers: _elizaos_core.Provider[];
-};
+declare const messariPlugin: Plugin;
 
-export { messariPlugin, index as providers };
+export { messariPlugin as default, messariPlugin, index as providers };

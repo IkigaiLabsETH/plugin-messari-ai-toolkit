@@ -6,7 +6,7 @@
     "module": "dist/index.js",
     "types": "dist/index.d.ts",
     "agentConfig": {
-        "pluginType": "elizaos:plugin:1.0.0",
+        "pluginType": "elizaos:plugin:1.0.9",
         "pluginParameters": {
             "MESSARI_API_KEY": {
                 "type": "string",
@@ -27,7 +27,7 @@
     ],
     "dependencies": {
         "tsup": "8.3.5",
-        "@elizaos/core": ">=0.25.6-alpha.1"
+        "@elizaos/core": "1.0.9"
     },
     "peerDependencies": {
         "whatwg-url": "7.1.0"  
