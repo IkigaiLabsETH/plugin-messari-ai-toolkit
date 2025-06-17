@@ -89,12 +89,12 @@ function getRecentMessages(state) {
 }
 async function generateText(runtime, prompt) {
   try {
-    const response = await runtime.useModel("text_completion", {
+    const response = await runtime.useModel("TEXT_SMALL", {
       prompt,
-      max_tokens: 150,
+      maxTokens: 150,
       temperature: 0.1
     });
-    return (response == null ? void 0 : response.text) || "";
+    return response || "";
   } catch (error) {
     elizaLogger.error("Error generating text:", error);
     return "";

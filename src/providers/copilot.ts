@@ -136,13 +136,13 @@ async function generateText(
   prompt: string
 ): Promise<string> {
   try {
-    // Use the text completion model
-    const response = await runtime.useModel("text_completion", {
+    // Use the text generation model
+    const response = await runtime.useModel("TEXT_SMALL", {
       prompt: prompt,
-      max_tokens: 150,
+      maxTokens: 150,
       temperature: 0.1,
     });
-    return response?.text || "";
+    return response || "";
   } catch (error) {
     elizaLogger.error("Error generating text:", error);
     return "";
