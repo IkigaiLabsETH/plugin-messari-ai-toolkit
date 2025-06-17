@@ -52,23 +52,19 @@ DEBUG=eliza:*
 ELIZA_DEBUG=true
 ```
 
-### 2. Character Configuration
+### 2. Project Agent Configuration
 
-Add the plugin to your character's configuration file:
+Add the plugin to your project agent configuration:
 
-```json
-{
-  "name": "Your Agent Name",
-  "plugins": [
-    "@elizaos-plugins/plugin-messari-ai-toolkit"
-  ],
-  "settings": {
-    "secrets": {},
-    "voice": {},
-    "model": "gpt-4",
-    "embeddingModel": "text-embedding-ada-002"
-  }
-}
+```typescript
+import { messariPlugin } from "@elizaos-plugins/plugin-messari-ai-toolkit";
+import { ProjectAgent, IAgentRuntime } from "@elizaos/core";
+
+export const projectAgent: ProjectAgent = {
+  character,
+  init: async (runtime: IAgentRuntime) => await initCharacter({ runtime }),
+  plugins: [messariPlugin],
+};
 ```
 
 ## 🔧 Usage
