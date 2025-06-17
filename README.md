@@ -1,129 +1,186 @@
-# @elizaos/plugin-messari-ai-toolkit
+# @elizaos-plugins/plugin-messari-ai-toolkit
 
-A powerful Eliza OS plugin that integrates Messari's AI Toolkit to provide advanced crypto market research capabilities to your Eliza agent.
+**Enterprise Messari AI Toolkit Integration for Eliza OS v1.0.9**
 
-## Overview
+This plugin integrates Messari's enterprise AI Toolkit with Eliza OS, enabling your agents to provide comprehensive crypto market research capabilities through advanced AI-powered insights.
 
-This plugin connects your Eliza agent to Messari's comprehensive AI-powered APIs, enabling sophisticated crypto research and market analysis capabilities. It intelligently detects and processes research questions from conversations, leveraging Messari's proprietary data and expertise.
+## 🚀 Features
 
-## Demo
+- **🔍 Intelligent Research Detection**: Automatically identifies crypto market research questions
+- **📊 Market Analysis**: Access to comprehensive cryptocurrency data and metrics
+- **🤖 AI-Powered Responses**: Leverages Messari's enterprise AI models for accurate insights
+- **⚡ Seamless Integration**: Works with any Eliza OS v1.0.9+ agent
+- **🔒 Enterprise-Grade**: Built for professional use with API key authentication
 
-https://github.com/messari/plugin-messari-ai-toolkit/blob/master/.github/assets/eliza-tutorial.mp4
+## 📋 Requirements
 
-## Features
+- **Eliza OS**: v1.0.9 or higher
+- **Node.js**: v18+ 
+- **Messari API Key**: Enterprise access required
 
-- Seamless integration with Messari's AI-Toolkit `/chat/completions` API
-- Intelligent detection of crypto-related research questions
-- Real-time market data and asset metrics analysis
-- Access to consolidated news summarizations
-- Asset due diligence insights
-- Fundraising and investment data visualization capabilities
+## 📦 Installation
 
-## Usage Guide
+### Using Eliza CLI (Recommended)
 
-### Setup
-
-1. First, clone either:
-   - The main Eliza repository: [github.com/elizaOS/eliza](https://github.com/elizaOS/eliza)
-   - OR the Eliza starter repository: [github.com/elizaOS/eliza-starter](https://github.com/elizaOS/eliza-starter)
-
-2. Install dependencies and build the project:
-   ```bash
-   pnpm install
-   pnpm build
-   ```
-
-### Installing the Messari Plugin
-
-Depending on which repository you cloned, use one of the following commands:
-
-**For Main Eliza Repository:**
 ```bash
-pnpm --filter agent add github:messari/plugin-messari-ai-toolkit
+# Add to your Eliza project
+elizaos plugins add @elizaos-plugins/plugin-messari-ai-toolkit
 ```
 
-**For Eliza Starter:**
+### Manual Installation
+
 ```bash
 pnpm add github:messari/plugin-messari-ai-toolkit
 ```
 
-> Note: For the latest plugin mappings and compatibility information, refer to the [eliza-plugins registry](https://github.com/elizaos-plugins/registry/blob/645ba61508a7404c5b890f47e43c005448592510/index.json#L60).
+## ⚙️ Configuration
 
-to use, import into `agent/index.ts` and add as a plugin
+### 1. Environment Variables
 
+Add the following environment variables to your `.env` file:
 
-## Configuration
+```bash
+# REQUIRED: Messari API Configuration
+MESSARI_API_KEY=your_messari_enterprise_api_key_here
 
-To use this plugin, you'll need a Messari API key. The Messari AI Toolkit is an enterprise product that requires:
+# OPTIONAL: Core Eliza Configuration
+LOG_LEVEL=info
+ELIZAOS_LOG_LEVEL=info
 
-1. An Enterprise (ENT) subscription
-2. Purchase of the AI Toolkit service package + credits
-3. API key generation
+# OPTIONAL: Advanced Logging (for debugging)
+DEBUG=eliza:*
+ELIZA_DEBUG=true
+```
 
-### Enterprise Access
+### 2. Project Agent Configuration
 
-The AI Toolkit subscription includes access to Messari's base package:
-- Asset API
-- News API
-- Marketdata API
+Add the plugin to your project agent configuration:
 
-### Getting an API Key
+```typescript
+import { messariPlugin } from "@elizaos-plugins/plugin-messari-ai-toolkit";
+import { ProjectAgent, IAgentRuntime } from "@elizaos/core";
 
-1. Subscribe to Messari Enterprise
-2. Purchase the AI Toolkit package
-3. Visit [Messari Account Settings](https://messari.io/account/api) to generate your API key
-4. Use the API key in your configuration
+export const projectAgent: ProjectAgent = {
+  character,
+  init: async (runtime: IAgentRuntime) => await initCharacter({ runtime }),
+  plugins: [messariPlugin],
+};
+```
 
-### API Endpoints
+## 🔧 Usage
 
-The Toolkit endpoints are accessible at `api.messari.io/ai`. For detailed API documentation, visit the [Messari Developer Docs](https://docs.messari.io/reference/chat-completion).
+Once configured, your agent will automatically detect crypto research questions and provide intelligent responses using Messari's AI Toolkit.
 
-## Usage
+### Example Queries
 
-1. Import and register the plugin with your Eliza agent
-2. Configure your API key
-3. Start asking crypto-related questions!
+```
+User: "What are the top 10 L2s by fees?"
+Agent: [Provides detailed Layer 2 analysis with current fee data]
 
-The plugin will automatically detect relevant research questions and query Messari's AI Toolkit for comprehensive answers.
+User: "Show me ETH price trends"
+Agent: [Returns comprehensive Ethereum price analysis]
 
-## About Messari AI Toolkit
+User: "What's the TVL of Arbitrum?"
+Agent: [Gives current Total Value Locked data for Arbitrum]
+```
 
-Messari's AI Toolkit is an enterprise-grade suite of AI-powered APIs designed specifically for the crypto ecosystem. It provides:
+## 🏗️ Development
 
-- Crypto-aware completions endpoint (OpenAI-compatible)
-- Asset extraction on arbitrary documents
-- Direct access to underlying agents
-- News recaps and summarizations
-- Deep understanding of crypto-specific terminology and context
-- Real-time market data analysis
+### Building the Plugin
 
-## Use Cases
+```bash
+# Install dependencies
+pnpm install
 
-- Market trend analysis with real-time data
-- Automated crypto research and report generation
-- News summarization across multiple sources
-- Asset due diligence with Enterprise Diligence Reports
-- Fundraising and investment data visualization
-- Asset extraction and classification for document contextualization
+# Build the plugin
+pnpm build
 
-## Security
+# Development mode with auto-rebuild
+pnpm dev
+```
 
-This plugin requires secure handling of Messari API keys. Never expose your API key in your code or version control system.
+### Testing
 
-## Performance Considerations
+```bash
+# Run tests
+pnpm test
 
-The plugin may introduce additional latency due to API calls. Consider implementing appropriate caching and error handling strategies in production environments.
+# Run with coverage
+pnpm test:coverage
+```
 
-## Contributing
+## 🔍 Troubleshooting
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+### Common Issues
 
-## License
+1. **API Key Not Found**
+   ```
+   Error: Messari API key not found in runtime settings
+   ```
+   **Solution**: Ensure `MESSARI_API_KEY` is set in your `.env` file
 
-MIT
+2. **Plugin Not Loading**
+   ```
+   Error: Plugin messariAiToolkit failed to load
+   ```
+   **Solution**: Verify the plugin is listed in your character's `plugins` array
 
-## Support
+3. **No Research Questions Detected**
+   - Ensure your questions are crypto/market related
+   - Check that the copilot provider is properly initialized
+   - Enable debug logging to see question processing
 
-For questions about API access and testing, contact bijan.massoumi@messari.io.
+### Debug Mode
 
-For technical support with the plugin, please open an issue in the repository.
+Enable detailed logging for troubleshooting:
+
+```bash
+# In your .env file
+LOG_LEVEL=debug
+DEBUG=eliza:plugin-messari:*
+ELIZA_DEBUG=true
+
+# Or set when running
+LOG_LEVEL=debug elizaos start --character your-character.json
+```
+
+## 📈 Supported Query Types
+
+The plugin automatically detects and processes:
+
+- **Market Data Requests**: Price, volume, market cap queries
+- **Protocol Analytics**: TVL, fees, user metrics
+- **Comparative Analysis**: Rankings, comparisons between protocols
+- **Historical Data**: Trends, historical performance
+- **Token Information**: Specific cryptocurrency details
+
+## 🔐 Security & Privacy
+
+- **API Key Protection**: Credentials are securely stored in environment variables
+- **Request Validation**: All API requests are validated before processing
+- **Error Handling**: Sensitive information is never exposed in error logs
+- **Rate Limiting**: Respects Messari API rate limits
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🔗 Links
+
+- **Messari**: [https://messari.io](https://messari.io)
+- **Eliza OS**: [https://github.com/elizaOS/eliza](https://github.com/elizaOS/eliza)
+- **Plugin Registry**: [Eliza Plugins](https://github.com/elizaOS/plugins)
+
+## 💬 Support
+
+- **Issues**: [GitHub Issues](https://github.com/your-username/plugin-messari-ai-toolkit/issues)
+- **Discord**: [Eliza Community](https://discord.gg/eliza)
+- **Documentation**: [Eliza Plugin Docs](https://elizaos.github.io/eliza/docs/plugins)
+
+---
+
+**Made with ❤️ for the Eliza OS ecosystem**

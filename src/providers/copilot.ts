@@ -1,9 +1,7 @@
 import {
   AgentRuntime as IAgentRuntime,
-  composeContext,
-  ModelClass,
   elizaLogger,
-  generateText,
+  composePrompt,
 } from "@elizaos/core";
 import type { Memory, Provider, State } from "@elizaos/core";
 
@@ -127,8 +125,33 @@ function getRecentMessages(state?: State): string {
   );
 }
 
+/**
+ * Generates text using the agent's model
+ * @param runtime - The agent runtime
+ * @param prompt - The prompt to generate from
+ * @returns Generated text response
+ */
+async function generateText(
+  runtime: IAgentRuntime,
+  prompt: string
+): Promise<string> {
+  try {
+    // Use the text generation model
+    const response = await runtime.useModel("TEXT_SMALL", {
+      prompt: prompt,
+      maxTokens: 150,
+      temperature: 0.1,
+    });
+    return response || "";
+  } catch (error) {
+    elizaLogger.error("Error generating text:", error);
+    return "";
+  }
+}
+
 const copilotProvider: Provider = {
-  get: async (runtime: IAgentRuntime, message: Memory, state?: State) => {
+  name: "messariCopilot",
+  get: async (runtime: IAgentRuntime, message: Memory, state: State) => {
     const apiKey = runtime.getSetting(CONFIG.ENV_API_KEY);
     if (!apiKey) {
       elizaLogger.error("Messari API key not found in runtime settings");
@@ -136,11 +159,11 @@ const copilotProvider: Provider = {
     }
 
     const contextState = {
-      ...state,
       currentMessage: message.content.text,
       recentMessages: getRecentMessages(state),
     };
-    const questionContext = composeContext({
+
+    const questionContext = composePrompt({
       state: contextState,
       template: COPILOT_QUESTION_TEMPLATE,
     });
@@ -149,12 +172,9 @@ const copilotProvider: Provider = {
       context: questionContext,
     });
 
-    const copilotQuestion = await generateText({
-      runtime,
-      context: questionContext,
-      modelClass: ModelClass.MEDIUM,
-    });
-    if (copilotQuestion === "NONE") {
+    const copilotQuestion = await generateText(runtime, questionContext);
+
+    if (copilotQuestion === "NONE" || !copilotQuestion.trim()) {
       elizaLogger.info("No research questions identified in the message");
       return null;
     }
@@ -162,7 +182,10 @@ const copilotProvider: Provider = {
     elizaLogger.info("Processing research question", {
       question: copilotQuestion,
     });
-    return await callMessariAPI(apiKey, copilotQuestion);
+
+    const result = await callMessariAPI(apiKey, copilotQuestion);
+
+    return result ? { text: result } : null;
   },
 };
 

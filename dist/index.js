@@ -6,10 +6,8 @@ var __export = (target, all) => {
 
 // src/providers/copilot.ts
 import {
-  composeContext,
-  ModelClass,
   elizaLogger,
-  generateText
+  composePrompt
 } from "@elizaos/core";
 var CONFIG = {
   RECENT_MESSAGES_COUNT: 5,
@@ -89,7 +87,21 @@ function getRecentMessages(state) {
   var _a;
   return ((_a = state == null ? void 0 : state.recentMessagesData) == null ? void 0 : _a.slice(-CONFIG.RECENT_MESSAGES_COUNT).map((m) => m.content.text).join("\n")) || "";
 }
+async function generateText(runtime, prompt) {
+  try {
+    const response = await runtime.useModel("TEXT_SMALL", {
+      prompt,
+      maxTokens: 150,
+      temperature: 0.1
+    });
+    return response || "";
+  } catch (error) {
+    elizaLogger.error("Error generating text:", error);
+    return "";
+  }
+}
 var copilotProvider = {
+  name: "messariCopilot",
   get: async (runtime, message, state) => {
     const apiKey = runtime.getSetting(CONFIG.ENV_API_KEY);
     if (!apiKey) {
@@ -97,30 +109,26 @@ var copilotProvider = {
       return null;
     }
     const contextState = {
-      ...state,
       currentMessage: message.content.text,
       recentMessages: getRecentMessages(state)
     };
-    const questionContext = composeContext({
+    const questionContext = composePrompt({
       state: contextState,
       template: COPILOT_QUESTION_TEMPLATE
     });
     elizaLogger.debug("Generated question context", {
       context: questionContext
     });
-    const copilotQuestion = await generateText({
-      runtime,
-      context: questionContext,
-      modelClass: ModelClass.MEDIUM
-    });
-    if (copilotQuestion === "NONE") {
+    const copilotQuestion = await generateText(runtime, questionContext);
+    if (copilotQuestion === "NONE" || !copilotQuestion.trim()) {
       elizaLogger.info("No research questions identified in the message");
       return null;
     }
     elizaLogger.info("Processing research question", {
       question: copilotQuestion
     });
-    return await callMessariAPI(apiKey, copilotQuestion);
+    const result = await callMessariAPI(apiKey, copilotQuestion);
+    return result ? { text: result } : null;
   }
 };
 
@@ -133,11 +141,15 @@ __export(providers_exports, {
 // src/index.ts
 var messariPlugin = {
   name: "messariAiToolkit",
-  description: "Messari AI Toolkit",
+  description: "Messari AI Toolkit for crypto market research capabilities",
   actions: [],
-  providers: [copilotProvider]
+  providers: [copilotProvider],
+  evaluators: [],
+  services: []
 };
+var index_default = messariPlugin;
 export {
+  index_default as default,
   messariPlugin,
   providers_exports as providers
 };
