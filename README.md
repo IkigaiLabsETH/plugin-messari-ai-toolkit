@@ -30,11 +30,7 @@ elizaos plugins add @elizaos-plugins/plugin-messari-ai-toolkit
 ### Manual Installation
 
 ```bash
-# Install the plugin
-npm install @elizaos-plugins/plugin-messari-ai-toolkit
-
-# Or with pnpm
-pnpm add @elizaos-plugins/plugin-messari-ai-toolkit
+pnpm add github:messari/plugin-messari-ai-toolkit
 ```
 
 ## ⚙️ Configuration
